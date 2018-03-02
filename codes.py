@@ -30,3 +30,7 @@ SENSOR_TEST = '\x1b\x86'
 RAM_TEST = '\x1b\x87'
 GET_MODEL = '\x1b\x74'
 GET_FIRMWARE = '\x1b\x76'
+
+# USB Identification
+VENDOR_ID = 0x0801
+PRODUCT_ID = 0x0003

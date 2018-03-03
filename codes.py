@@ -25,9 +25,9 @@ LED_RED = '\x1b\x85'
 
 # MSR 206 Misc Codes
 RESET = '\x1b\x61'
-COMM_TEST = '\x1b\x65'
-SENSOR_TEST = '\x1b\x86'
-RAM_TEST = '\x1b\x87'
+TEST_COMM = '\x1b\x65'
+TEST_SENSOR = '\x1b\x86'
+TEST_RAM = '\x1b\x87'
 GET_MODEL = '\x1b\x74'
 GET_FIRMWARE = '\x1b\x76'
 

@@ -132,21 +132,27 @@ class Reader:
         for v in self.card_data:
             print(v)
 
-    """ Read card with ISO format. """
-    def read_ISO(self):
+    """ Read card with ISO format. Param is timeout checker."""
+    def read_ISO(self, iters):
         self.reset()
 
         msg = '\xc2%s' % READ_ISO
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
-        print('Waiting to process swipe...\n')
-
+        if iters == 0:
+            print('Please swipe your card.\n')
+        elif iters == 11:
+            print('Operation is about to timeout.\n')
+        elif iters >= 15:
+            self.reset()
+            print('Operation timed out.\n')
+            return
+        
         try:
-            data = self.dev.read(0x81, 1024, 3000)
+            data = self.dev.read(0x81, 1024, 500)
         except usb.core.USBError as e:
             if str(e) == ('[Errno 110] Operation timed out'):
-                print('Reader timed out, please swipe again.')
-                return self.read_ISO()
+                return self.read_ISO(iters+1)
             else:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))

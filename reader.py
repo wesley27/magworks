@@ -84,6 +84,7 @@ class Reader:
 
     """ Test card reader LEDs """
     def test_leds(self):
+        self.reset()
         print('Testing LEDs...')
 
         print('\t\t...disabling all LEDs.')
@@ -289,6 +290,38 @@ class Reader:
                 sys.exit('Read operation failed: %s' % str(e))
 
         self.parse_ISO(data)
+
+    """ Obtain msr device model. """
+    def get_model(self):
+        print('Obtaining device information...')
+        msg = '\xc2%s' % GET_MODEL
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        
+        try:
+            ret = self.dev.read(0x81, 1024, 3000)
+        except usb.core.USBError as e:
+            self.reset()
+            print('\t\t...device request timed out.')
+            return
+
+        result = [hex(x).replace('0x', '') for x in ret]
+        print(str(result)) #TODO clean this up
+
+    """ Obtain msr device firmware version. """
+    def get_firmware(self):
+        print('Obtaining device information...')
+        msg = '\xc2%s' % GET_FIRMWARE
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        
+        try:
+            ret = self.dev.read(0x81, 1024, 3000)
+        except usb.core.USBError as e:
+            self.reset()
+            print('\t\t...device request timed out.')
+            return
+
+        result = [hex(x).replace('0x', '') for x in ret]
+        print(str(result)) #TODO clean this up
 
         
     """ Initialize the device and claim it."""

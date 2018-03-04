@@ -2,6 +2,7 @@ import sys
 import usb.core
 import usb.util
 import codecs
+import time
 
 from codes import *
 
@@ -80,6 +81,42 @@ class Reader:
             print('\t\t...memory test failed. (WARNING, reader may still work)\n')
         else:
             sys.exit('Obtained unreadable result while testing memory.')
+
+    """ Test card reader LEDs """
+    def test_leds(self):
+        print('Testing LEDs...')
+
+        print('\t\t...disabling all LEDs.')
+        msg = '\xc2%s' % LED_OFF
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        time.sleep(1.5)
+
+        print('\t\t...testing green LED.')
+        msg = '\xc2%s' % LED_GREEN
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        time.sleep(1.5)
+
+        print('\t\t...testing yellow(and green) LED.')
+        msg = '\xc2%s' % LED_YELLOW
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        time.sleep(1.5)
+
+        print('\t\t...testing red LED.')
+        msg = '\xc2%s' % LED_RED
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        time.sleep(1.5)
+
+        print('\t\t...testing all LEDs.')
+        msg = '\xc2%s' % LED_ON
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        time.sleep(1.25)
+
+        print('\t\t...re-enabling green LED.')
+        msg = '\xc2%s' % LED_GREEN
+        assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
+        
+        print('Test complete.')
+
 
     """ Parse ISO card data. """
     def parse_ISO(self, data):

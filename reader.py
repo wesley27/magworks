@@ -8,9 +8,9 @@ from codes import *
 class Reader:
     
     """ Initialize the reader class. """
-    def __init__(self):
-        self.vid = VENDOR_ID
-        self.pid = PRODUCT_ID
+    def __init__(self, vid=VENDOR_ID, pid=PRODUCT_ID):
+        self.vid = vid
+        self.pid = pid
 
     """ Rest card reader interface. """
     def reset(self):
@@ -220,6 +220,7 @@ class Reader:
         for v in card_data:
             print(v)
 
+        #print(str(result[current:]))
         if current < len(result):
             print('Track 3:\n  This track has proprietary encoding from the issuer.')
 
@@ -255,30 +256,31 @@ class Reader:
         
     """ Initialize the device and claim it."""
     def claim_reader(self):
-        print('Initializing MagWorks...')
+        print('Locating device...')
         self.dev = usb.core.find(idVendor = self.vid, idProduct = self.pid)
 
         # ensure msr exists
         if self.dev is None:
-            sys.exit('MagWorks could not find any card readers.')
-        print('\t\t...located card reader.')
+            sys.exit('\t\t...failed to locate a magnetic stripe reader. Exiting.')
+        print('\t\t...magnetic stripe reader found.')
 
         # disable any existing drivers
+        print('Searching for active drivers...')
         if self.dev.is_kernel_driver_active(0):
             try:
                 self.dev.detach_kernel_driver(0)
                 print('\t\t...detached existing kernel driver.')
             except usb.core.USBError as e:
-                sys.exit('MagWorks was unable to detach the existing kernel driver: %s' % str(e))
+                sys.exit('\t\t...failed to detach an existing kernel driver: %s' % str(e))
+        else:
+            print('\t\t...no active drivers found.')
 
         # set up msr configuration
+        print('Configuring USB device...')
         try:
             self.dev.set_configuration()
             self.dev.reset()
         except usb.core.USBError as e:
-            sys.exit('MagWorks failed to set the MSR configuration: %s' % str(e))
-        print('\t\t...set card reader configuration.\n')
+            sys.exit('\t\t...failed to set device configuration: %s' % str(e))
+        print('\t\t...set device configuration.\n')
 
-        self.test_comms()
-        #self.test_sensor()
-        #self.test_ram()

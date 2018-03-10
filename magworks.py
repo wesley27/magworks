@@ -4,7 +4,7 @@ from reader import *
 version = '0.0.1'
 
 def cli():
-    parser = argparse.ArgumentParser(prog='magworks', description='A command-line tool for intefacing MSR devices.(MSR206/MSR605/MSR605X/MSR606)', epilog='Operational arguments (such as -r, read) must be used individually, and will be processed in the order they appear below.')
+    parser = argparse.ArgumentParser(prog='magworks', description='A command-line tool for intefacing MSR devices.(MSR206/MSR605/MSR605X/MSR606). Operational arguments (such as -r, read) must be used individually, and will be processed in the order they appear below.', epilog='Developed by W. Wesley Weidenhamer II.')
     
     parser.add_argument('-r', choices=['iso', 'raw'], help='read data from a magnetic stripe card')
     parser.add_argument('-w', choices=['iso', 'raw'], help='write data to a magnetic stripe card')

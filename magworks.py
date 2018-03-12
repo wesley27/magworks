@@ -17,7 +17,7 @@ def cli():
     parser.add_argument('-r', choices=['iso', 'raw'], help='read data from a magnetic stripe card')
     parser.add_argument('-w', choices=['iso', 'raw'], help='write data to a magnetic stripe card')
     parser.add_argument('-c', action='store_true', help='clone data from an existing card to a new one')
-    parser.add_argument('-e', action='store_true', help='erase data from a magnetic stripe card')
+    parser.add_argument('-e', choices=['all, 1, 2, 3'], help='erase data from a magnetic stripe card')
     parser.add_argument('-t', choices=['conn', 'sensor', 'ram', 'led'], help='test connection and msr device')
     parser.add_argument('-m', action='store_true', help='get model of msr device')
     parser.add_argument('-f', action='store_true', help='get firmware version of msr device')
@@ -46,8 +46,8 @@ def main():
     elif args.c is not False:
         print('This operation does not exist yet!')
 
-    elif args.e is not False:
-        print('This operation does not exist yet!')
+    elif args.e is not None:
+        #do erase for tracks specified
     
     elif args.t is not None:
         msr.test_comms() if args.t == 'conn' else msr.test_sensor() if args.t == 'sensor' else msr.test_ram() if args.t == 'ram' else msr.test_leds()

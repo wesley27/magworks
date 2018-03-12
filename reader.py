@@ -146,6 +146,13 @@ class Reader:
         self.reset()
         parse_ISO(data)
 
+    """ Erase card data. """
+    def erase(self):
+        msg = '\xc2%s' % ERASE_CARD #TODO differeing erase msgs
+        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) = len(msg)
+
+        
+
     """ Obtain msr device model. """
     def get_model(self):
         print('Obtaining device information...')

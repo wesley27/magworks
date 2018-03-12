@@ -1,7 +1,7 @@
 import codecs
 
 """ Parse ISO card data. """
-def parse_ISO(self, data):
+def parse_ISO(data):
     result = [hex(x).replace('0x', '') for x in data]
 
     ### TRACK 1 (IATA) ###

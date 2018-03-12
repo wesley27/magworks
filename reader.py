@@ -21,7 +21,6 @@ class Reader:
 
     """ Test communication link with card reader. """
     def test_comms(self):
-        self.reset()
         print('Checking communication link...')
         
         msg = '\xc2%s' % TEST_COMM
@@ -34,7 +33,7 @@ class Reader:
             sys.exit('MagWorks lost connection to the card reader.')
 
         result = [hex(x) for x in ret]
-
+        self.reset()
         if result[1] == '0x1b' and result[2] == '0x79':
             print('\t\t...connection is up and running.\n')
         else:
@@ -55,6 +54,7 @@ class Reader:
             return
 
         result = [hex(x) for x in ret]
+        self.reset()
         if result[1] == '0x1b' and result[2] == '0x30':
             print('\t\t...sensor test successful.\n')
         elif result[1] == '0x1b' and result[2] == '0x41':
@@ -76,6 +76,7 @@ class Reader:
             return
 
         result = [hex(x) for x in ret]
+        self.reset()
         if result[1] == '0x1b' and result[2] == '0x30':
             print('\t\t...memory test successful.\n')
         elif result[1] == '0x1b' and result[2] == '0x41':
@@ -85,7 +86,6 @@ class Reader:
 
     """ Test card reader LEDs """
     def test_leds(self):
-        self.reset()
         print('Testing LEDs...')
 
         print('\t\t...disabling all LEDs.')
@@ -117,12 +117,11 @@ class Reader:
         msg = '\xc2%s' % LED_GREEN
         assert self.dev.ctrl_transfer(0x21, 9, 0x300, 0, msg) == len(msg)
         
+        self.reset()
         print('Test complete.')    
 
     """ Read card with ISO format. Param is timeout checker."""
     def read_ISO(self, iters):
-        self.reset()
-
         msg = '\xc2%s' % READ_ISO
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
@@ -144,6 +143,7 @@ class Reader:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))
 
+        self.reset()
         parse_ISO(data)
 
     """ Obtain msr device model. """
@@ -160,6 +160,7 @@ class Reader:
             return
 
         result = [hex(x).replace('0x', '') for x in ret]
+        self.reset()
         print(str(result)) #TODO clean this up
 
     """ Obtain msr device firmware version. """
@@ -176,6 +177,7 @@ class Reader:
             return
 
         result = [hex(x).replace('0x', '') for x in ret]
+        self.reset()
         print(str(result)) #TODO clean this up
 
         

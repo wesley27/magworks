@@ -147,9 +147,9 @@ class Reader:
         parse_ISO(data)
 
     """ Erase card data. """
-    def erase(self):
-        msg = '\xc2%s' % ERASE_CARD #TODO differeing erase msgs
-        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) = len(msg)
+    def erase(self, track):
+        msg = '\xc2%s%s' % (ERASE_CARD, track)
+        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
         
 

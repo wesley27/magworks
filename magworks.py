@@ -47,7 +47,7 @@ def main():
         print('This operation does not exist yet!')
 
     elif args.e is not None:
-        msr.erase('\x00') if (args.e == '1') else msr.erase('\x02') if (args.e == '2') else msr.erase('\x04') if (args.e == '3') else msr.erase('\x07')
+        msr.erase('\x00', 0) if (args.e == '1') else msr.erase('\x02', 0) if (args.e == '2') else msr.erase('\x04', 0) if (args.e == '3') else msr.erase('\x07', 0)
     
     elif args.t is not None:
         msr.test_comms() if (args.t == 'conn') else msr.test_sensor() if (args.t == 'sensor') else msr.test_ram() if (args.t == 'ram') else msr.test_leds()

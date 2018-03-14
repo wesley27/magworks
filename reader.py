@@ -143,15 +143,36 @@ class Reader:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))
 
+        #TODO Check on return bytes for better parsing/handling read errors
         self.reset()
         parse_ISO(data)
 
     """ Erase card data. """
-    def erase(self, track):
+    def erase(self, track, iters):
         msg = '\xc2%s%s' % (ERASE_CARD, track)
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
-        
+        if iters == 0:
+            print('Please swipe your card.\n')
+        elif iters == 10:
+            print('Operation is about to timeout.\n')
+        elif iters >= 15:
+            self.reset()
+            print('Operation timed out.\n')
+            return
+
+
+        try:
+            ret = selv.dev.read(0x81, 1024, 500)
+        except usb.core.USBError as e:
+            if str(e) == ('[Errno 110] Operation timed out'):
+                return self.erase(track, iters+1)
+            else:
+                self.reset()
+                sys.exit('Erase operation failed: %s' % str(e))
+
+        self.reset()
+        #TODO confirm response of erase failure or success        
 
     """ Obtain msr device model. """
     def get_model(self):

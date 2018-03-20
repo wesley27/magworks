@@ -122,6 +122,7 @@ class Reader:
 
     """ Read card with ISO format. Param is timeout checker."""
     def read_ISO(self, iters):
+        self.reset()
         msg = '\xc2%s' % READ_ISO
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
@@ -144,11 +145,12 @@ class Reader:
                 sys.exit('Read operation failed: %s' % str(e))
 
         #TODO Check on return bytes for better parsing/handling read errors
-        self.reset()
         parse_ISO(data)
+        #self.reset()
 
     """ Erase card data. """
     def erase(self, track, iters):
+        self.reset()
         msg = '\xc2%s%s' % (ERASE_CARD, track)
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
 
@@ -163,16 +165,22 @@ class Reader:
 
 
         try:
-            ret = selv.dev.read(0x81, 1024, 500)
+            ret = self.dev.read(0x81, 1024, 500)
         except usb.core.USBError as e:
             if str(e) == ('[Errno 110] Operation timed out'):
                 return self.erase(track, iters+1)
             else:
                 self.reset()
-                sys.exit('Erase operation failed: %s' % str(e))
+                sys.exit('...Erase operation failed: %s' % str(e))
 
-        self.reset()
-        #TODO confirm response of erase failure or success        
+        result = [hex(x) for x in ret]
+        print(str(result))
+        '''if result[1] == '0x1b' and result[2] == '0x30':
+            print('\t\t...card data successfully erased.\n')
+        elif result[1] == '0x1b' and result[2] == '0x41':
+            print('\t\t...failed to erase card data.\n')
+        else:
+            sys.exit('Obtained invalid response while attempted to delete card data.\n')'''
 
     """ Obtain msr device model. """
     def get_model(self):

@@ -32,13 +32,16 @@ This tool is still under development, with the end-goal of achieving complete co
 
 Current progress and development:
 - [x] locate and gain control of msr device
-- [x] run device test functions and led control
+- [x] run device test functions
+- [x] led control and led test function
 - [x] read ISO card data
 - [x] parse ISO card data
-- [ ] clean-up ISO parser, parse service codes
-- [ ] read raw card data
+- [ ] parse service codes
+- [x] read raw card data
 - [ ] parse raw card data
 - [ ] write ISO card data
 - [ ] write raw card data
 - [ ] clone card data
-- [ ] erase card data
+- [x] erase card data
+- [x] get msr-device model (encoded)
+- [x] get msr-device firmware (encoded)

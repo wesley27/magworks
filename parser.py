@@ -147,7 +147,7 @@ def ISO_track3(result, card_data):
 """ Parse ISO card data. """
 def parse_ISO(data):
     result = [hex(x).replace('0x', '') for x in data]
-
+    print(str(result))
     for i in range(len(result)):
         if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
             t3_end = i

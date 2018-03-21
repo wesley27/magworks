@@ -38,7 +38,7 @@ def main():
     msr.claim_reader()
 
     if args.r is not None:
-        msr.read_ISO(0) if (args.r == 'iso') else msr.read_raw(0)
+        msr.read_ISO(0) if args.r == 'iso' else msr.read_RAW(0)
     
     elif args.w is not None:
         print('This operation does not exist yet!')

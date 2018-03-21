@@ -2,6 +2,7 @@ import sys
 import usb.core
 import usb.util
 import time
+import codecs
 
 from codes import *
 from parser import *
@@ -146,7 +147,37 @@ class Reader:
 
         #TODO Check on return bytes for better parsing/handling read errors
         parse_ISO(data)
-        #self.reset()
+
+    """ Read card raw data. Param is timeout checker. """
+    def read_RAW(self, iters):
+        self.reset()
+        msg = '\xc2%s' % READ_RAW
+        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
+
+        if iters == 0:
+            print('Please swipe your card.\n')
+        elif iters == 10:
+            print('Operation is about to timeout.\n')
+        elif iters >= 15:
+            self.reset()
+            print('Operation timed out.\n')
+            return
+
+        try:
+            data = self.dev.read(0x81, 1024, 500)
+        except usb.core.USBError as e:
+            if str(e) == ('[Errno 110] Operation timed out'):
+                return self.read_RAW(iters+1)
+            else:
+                self.reset()
+                sys.exit('Read operation failed: %s' % str(e))
+
+        result = [hex(x).replace('0x', '') for x in data]
+        print(str(result))
+        s = ''
+        for v in result[5:10]:
+            s += codecs.decode(v, 'hex')
+        print(s)
 
     """ Erase card data. """
     def erase(self, track, iters):
@@ -177,7 +208,6 @@ class Reader:
                 sys.exit('...Erase operation failed: %s' % str(e))
 
         result = [hex(x) for x in ret]
-        print(str(result))
 
         if result[1] == '0x1b' and result[2] == '0x30':
             print('\t\t...card data successfully erased.\n')

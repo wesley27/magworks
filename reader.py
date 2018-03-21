@@ -150,6 +150,10 @@ class Reader:
 
     """ Erase card data. """
     def erase(self, track, iters):
+        confirm = raw_input('WARNING: Due to (what\'s believed to be) a firmware issue, individual tracks cannot be erased. All data will be deleted from the card you swipe. Press \'n\' to quit, or any key to continue.\n')
+        if confirm == 'n':
+            return
+
         self.reset()
         msg = '\xc2%s%s' % (ERASE_CARD, track)
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)

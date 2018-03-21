@@ -131,6 +131,7 @@ def ISO_track2(result, card_data):
 
     return card_data
 
+""" Parse data from track 3 in ISO format. """
 def ISO_track3(result, card_data):
     # confirm track 3 start sentinel
     if len(result) == 0 or result[0] != '3b':
@@ -147,22 +148,19 @@ def ISO_track3(result, card_data):
 """ Parse ISO card data. """
 def parse_ISO(data):
     result = [hex(x).replace('0x', '') for x in data]
-    print(str(result))
+    #print(str(result))
     for i in range(len(result)):
         if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
             t3_end = i
             break
-        if result[i] == '1b' and result[i+1] == '3':
+        elif result[i] == '1b' and result[i+1] == '3':
             t2_end = i
             t3_start = i+2
-            continue
-        if result[i] == '1b' and result[i+1] == '2':
+        elif result[i] == '1b' and result[i+1] == '2':
             t1_end = i
             t2_start = i+2
-            continue
-        if result[i] == '1b' and result[i+1] == '1':
+        elif result[i] == '1b' and result[i+1] == '1':
             t1_start = i+2
-            continue
 
     card_data = ISO_track1(result[t1_start:t1_end])
     card_data = ISO_track2(result[t2_start:t2_end], card_data)
@@ -170,3 +168,81 @@ def parse_ISO(data):
     
     for i in card_data:
         print(i)
+
+""" Parse RAW data from track 1."""
+def RAW_track1(data):
+    for i in range(len(data)):
+        if len(data[i]) == 1:
+            data[i] = '0'+data[i]
+    
+    length = codecs.decode(data[0], 'hex') 
+    
+    rd = str(data[1:])
+    dcd = codecs.decode(''.join(data[1:]), 'hex')
+    
+    card_data = []
+    card_data.append('Track 1:')
+    card_data.append('  Length: ' + length)
+    card_data.append('  Raw: ' + rd)
+    card_data.append('  Decoded: ' + dcd)
+
+    return card_data
+
+""" Parse RAW data from track 2. """
+def RAW_track2(data, card_data):
+    for i in range(len(data)):
+        if len(data[i]) == 1:
+            data[i] = '0'+data[i]
+            
+    length = codecs.decode(data[0], 'hex') 
+    rd = str(data[1:])
+    rd = str(data[1:])
+    dcd = codecs.decode(''.join(data[1:]), 'hex')
+    dcd = codecs.decode(''.join(data[1:]), 'hex')   
+    card_data.append('Track 2:')
+    card_data.append('  Length: ' + length)
+    card_data.append('  Raw: ' + rd)
+    card_data.append('  Decoded: ' + dcd)   
+
+    return card_data   
+
+""" Parse RAW data from track 3. """
+def RAW_track3(data, card_data):
+    for i in range(len(data)):
+        if len(data[i]) == 1:
+            data[i] = '0'+data[i]
+            
+    length = codecs.decode(data[0], 'hex') 
+    rd = str(data[1:])
+
+    dcd = codecs.decode(''.join(data[1:]), 'hex')   
+    card_data.append('Track 3:')
+    card_data.append('  Length: ' + length)
+    card_data.append('  Raw: ' + rd)
+    card_data.append('  Decoded: ' + dcd)
+
+    return card_data   
+
+""" Parse RAW card data. """
+def parse_RAW(data):
+    result = [hex(x).replace('0x', '') for x in data]
+    print(str(result))
+    for i in range(len(result)):
+        if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
+            t3_end = i
+            break
+        elif result[i] == '1b' and result[i+1] == '3':
+            t2_end = i
+            t3_start = i+2
+        elif result[i] == '1b' and result[i+1] == '2':
+            t1_end = i
+            t2_start = i+2
+        elif result[i] == '1b' and result[i+1] == '1':
+            t1_start = i+2
+
+    card_data = RAW_track1(result[t1_start:t1_end])
+    card_data = RAW_track2(result[t2_start:t2_end], card_data)
+    card_data = RAW_track3(result[t3_start:t3_end], card_data)
+
+    for l in card_data:
+        print(l)

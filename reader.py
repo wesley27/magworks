@@ -172,12 +172,7 @@ class Reader:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))
 
-        result = [hex(x).replace('0x', '') for x in data]
-        print(str(result))
-        s = ''
-        for v in result[5:10]:
-            s += codecs.decode(v, 'hex')
-        print(s)
+        parse_RAW(data)
 
     """ Erase card data. """
     def erase(self, track, iters):

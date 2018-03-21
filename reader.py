@@ -163,7 +163,6 @@ class Reader:
             print('Operation timed out.\n')
             return
 
-
         try:
             ret = self.dev.read(0x81, 1024, 500)
         except usb.core.USBError as e:
@@ -175,12 +174,13 @@ class Reader:
 
         result = [hex(x) for x in ret]
         print(str(result))
-        '''if result[1] == '0x1b' and result[2] == '0x30':
+
+        if result[1] == '0x1b' and result[2] == '0x30':
             print('\t\t...card data successfully erased.\n')
         elif result[1] == '0x1b' and result[2] == '0x41':
             print('\t\t...failed to erase card data.\n')
         else:
-            sys.exit('Obtained invalid response while attempted to delete card data.\n')'''
+            sys.exit('Obtained invalid response while attempted to delete card data.\n')
 
     """ Obtain msr device model. """
     def get_model(self):

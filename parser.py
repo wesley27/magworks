@@ -126,14 +126,15 @@ def ISO_track2(result, card_data):
 
     dd = codecs.decode(''.join(result[current:len(result)-1]), 'hex')
 
-    card_data.append('Track 2:')
-    card_data.append('  Country Code:\t\t' + cc)
-    card_data.append('  Primary Account #:\t' + pan)
-    card_data.append('  Expiration Date:\t' + ed)
-    card_data.append('  Service Code:\t\t' + sc)
-    card_data.append('  PVV:\t\t\t' + pv)
-    card_data.append('  Discretionary:\t' + dd)
-    card_data.append('  - MagSpoof plaintext:\t' + mpt)
+    if 'Track 2:' not in card_data:
+        card_data.append('Track 2:')
+        card_data.append('  Country Code:\t\t' + cc)
+        card_data.append('  Primary Account #:\t' + pan)
+        card_data.append('  Expiration Date:\t' + ed)
+        card_data.append('  Service Code:\t\t' + sc)
+        card_data.append('  PVV:\t\t\t' + pv)
+        card_data.append('  Discretionary:\t' + dd)
+        card_data.append('  - MagSpoof plaintext:\t' + mpt)
 
     return card_data
 
@@ -176,11 +177,8 @@ def parse_ISO(data, ms):
     card_data = ISO_track2(result[t2_start:t2_end], card_data)
     card_data = ISO_track3(result[t3_start:t3_end], card_data, ms)
     
-    for i in range(len(card_data)):
-        if ms and i < 18 and card_data.index(card_data[i]) >= i:
-            print(card_data[i])
-        else:
-            break
+    for i in card_data:
+        print(i)
 
 """ Parse RAW data from track 1."""
 def RAW_track1(data):

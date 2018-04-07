@@ -137,7 +137,7 @@ class Reader:
             return
         
         try:
-            data = self.dev.read(0x81, 1024, 1000)
+            data = self.dev.read(0x81, 1024, 750)
         except usb.core.USBError as e:
             if str(e) == ('[Errno 110] Operation timed out'):
                 return self.read_ISO(iters+1, clone, ms)

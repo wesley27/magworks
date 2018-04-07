@@ -17,7 +17,7 @@ def cli():
     
     parser.add_argument('-r', choices=['iso', 'raw'], help='read data from a magnetic stripe card')
     parser.add_argument('-w', choices=['iso', 'raw'], help='write data to a magnetic stripe card')
-    parser.add_argument('-c', action='store_true', help='clone data from an existing card to a new one')
+    parser.add_argument('-c', choices=['iso', 'raw'], help='clone data from an existing card to a new one')
     parser.add_argument('-e', choices=['all', '1', '2', '3'], help='erase data from a magnetic stripe card')
     parser.add_argument('-t', choices=['conn', 'sensor', 'ram', 'led'], help='test connection and msr device')
     parser.add_argument('-m', action='store_true', help='get model of msr device')
@@ -39,13 +39,13 @@ def main():
     msr.claim_reader()
 
     if args.r is not None:
-        msr.read_ISO(0) if args.r == 'iso' else msr.read_RAW(0)
+        msr.read_ISO(0, False) if args.r == 'iso' else msr.read_RAW(0)
     
     elif args.w is not None:
-        print('This operation does not exist yet!')
+        msr.write_ISO() if args.w == 'iso' else msr.write_RAW(0)
 
-    elif args.c is not False:
-        print('This operation does not exist yet!')
+    elif args.c is not None:
+        msr.clone_ISO() if args.c == 'iso' else msr.clone_RAW()
 
     elif args.e is not None:
         msr.erase('\x00', 0) if (args.e == '1') else msr.erase('\x02', 0) if (args.e == '2') else msr.erase('\x04', 0) if (args.e == '3') else msr.erase('\x07', 0)

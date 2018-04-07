@@ -104,7 +104,7 @@ def ISO_track2(result, card_data):
         cc = 'N/A'
         current += 1
 
-    if result[current:current+1][0] == '3d': # no expirationd date
+    if result[current:current+1][0] == '3d': # no expiration date
         ed = 'N/A'
         current += 1
     else:
@@ -148,12 +148,12 @@ def ISO_track3(result, card_data):
     card_data.append('Track 3:')
     card_data.append('  This track contains the following proprietary encoded data:')
     card_data.append('  ' + str(result))
+    card_data.append('  > ' + codecs.decode(''.join(result), 'hex'))
 
     return card_data
 
 """ Parse ISO card data. """
 def parse_ISO(data):
-    print(str(data))
     result = [hex(x).replace('0x', '') for x in data]
     print(str(result))
     for i in range(len(result)):

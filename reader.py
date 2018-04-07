@@ -122,7 +122,7 @@ class Reader:
         print('Test complete.')    
 
     """ Read card with ISO format. Param is timeout checker."""
-    def read_ISO(self, iters):
+    def read_ISO(self, iters, clone):
         self.reset()
         msg = '\xc2%s' % READ_ISO
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
@@ -137,16 +137,17 @@ class Reader:
             return
         
         try:
-            data = self.dev.read(0x81, 1024, 500)
+            data = self.dev.read(0x81, 1024, 1000)
         except usb.core.USBError as e:
             if str(e) == ('[Errno 110] Operation timed out'):
-                return self.read_ISO(iters+1)
+                return self.read_ISO(iters+1, clone)
+                #sys.exit('Read operation timed out.')
             else:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))
 
         #TODO Check on return bytes for better parsing/handling read errors
-        parse_ISO(data)
+        return parse_ISO(data) if not clone else data
 
     """ Read card raw data. Param is timeout checker. """
     def read_RAW(self, iters):
@@ -173,6 +174,64 @@ class Reader:
                 sys.exit('Read operation failed: %s' % str(e))
 
         parse_RAW(data)
+
+    def write_RAW(self, iters):
+        self.reset()
+        msg = '\xc2%s%s' % (WRITE_RAW, '\x1b\x73\x1b\x01\x04\xa3\xf1\x60\x00\x1b\x02\x0d\xd7\x33\xcc\xd6\x61\xab\x49\x58\x05\x0d\xff\xc0\x00\x1b\x03\x03\xd7\xc8\x00\x3f\x1c')
+
+        print(msg)
+
+        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
+
+        if iters == 0:
+            print('Please swipe a blank card.\n')
+        elif iters == 10:
+            print('Operation is about to timeout.\n')
+        elif iters >= 15:
+            self.reset()
+            print('Operation timed out.\n')
+            return
+
+        try:
+            data = self.dev.read(0x81, 1024, 500)
+        except usb.core.USBError as e:
+            if str(e) == ('[Errno 110] Operation timed out'):
+                return self.write_RAW(iters+1)
+            else:
+                self.reset()
+                sys.exit('Read operation failed: %s' % str(e))
+
+        print(str(data))
+
+    def clone_ISO(self):
+        sys.exit('This feature has not yet been implemented.')
+
+        '''self.reset()
+        data = self.read_ISO(0, True)[1:]
+        #print(str(data))
+        result = [hex(x).replace('0x', 'x') for x in data]
+
+        for i in range(len(result)):
+            if len(result[i]) == 2:
+                result[i] = 'x0' + result[i][1:]
+            if result[i] == 'x3f' and result[i+1] == 'x1c':
+                result = result[:i+2]
+                break
+            
+        #print(str(result))
+
+        self.reset()
+        msg = '\xc2%s' % (WRITE_ISO + codecs.decode(''.join(result).replace('x', ''), 'hex'))
+        print(str(msg))
+        assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
+
+        print('Please swipe the to-be cloned card.')
+        try:
+            ret = self.dev.read(0x81, 1024, 3500)
+        except usb.core.USBError as e:
+            sys.exit('Operation timed out.')
+
+        print(str(ret))'''
 
     """ Erase card data. """
     def erase(self, track, iters):

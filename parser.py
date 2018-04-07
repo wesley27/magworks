@@ -176,8 +176,11 @@ def parse_ISO(data, ms):
     card_data = ISO_track2(result[t2_start:t2_end], card_data)
     card_data = ISO_track3(result[t3_start:t3_end], card_data, ms)
     
-    for i in card_data:
-        print(i)
+    for i in range(len(card_data)):
+        if ms and i < 18 and card_data.index(card_data[i]) >= i:
+            print(card_data[i])
+        else:
+            break
 
 """ Parse RAW data from track 1."""
 def RAW_track1(data):
@@ -254,5 +257,6 @@ def parse_RAW(data):
     card_data = RAW_track2(result[t2_start:t2_end], card_data)
     card_data = RAW_track3(result[t3_start:t3_end], card_data)
 
-    for l in card_data:
-        print(l)
+    for i in range(len(card_data)):
+        if card_data.index(card_data[i]) >= i:
+            print(card_data[i])

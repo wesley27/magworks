@@ -6,6 +6,8 @@ def ISO_track1(result):
     if len(result) == 0 or result[0] != '25':
         return []
 
+    mpt = codecs.decode(''.join(result), 'hex') + '\\0'
+
     fcode = codecs.decode(''.join(result[1:2]), 'hex')
 
     # iterators to keep track of current data index
@@ -71,6 +73,7 @@ def ISO_track1(result):
     card_data.append('  Service Code:\t\t' + sc)#TODO add service code description
     card_data.append('  PVV:\t\t\t' + pv)
     card_data.append('  Discretionary:\t' + dd)
+    card_data.append('  - MagSpoof plaintext:\t' + mpt)
 
     return card_data
 
@@ -89,6 +92,8 @@ def ISO_track2(result, card_data):
         if h == '3d': # field separator
             break
         current += 1
+
+    mpt = codecs.decode(''.join(result[start-1:]), 'hex') + '\\0'
 
     pan = codecs.decode(''.join(result[start:current]), 'hex')
 
@@ -128,6 +133,7 @@ def ISO_track2(result, card_data):
     card_data.append('  Service Code:\t\t' + sc)
     card_data.append('  PVV:\t\t\t' + pv)
     card_data.append('  Discretionary:\t' + dd)
+    card_data.append('  - MagSpoof plaintext:\t' + mpt)
 
     return card_data
 
@@ -147,8 +153,9 @@ def ISO_track3(result, card_data):
 
 """ Parse ISO card data. """
 def parse_ISO(data):
+    print(str(data))
     result = [hex(x).replace('0x', '') for x in data]
-    #print(str(result))
+    print(str(result))
     for i in range(len(result)):
         if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
             t3_end = i

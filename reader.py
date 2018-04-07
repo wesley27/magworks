@@ -121,8 +121,8 @@ class Reader:
         
         print('Test complete.')    
 
-    """ Read card with ISO format. Param is timeout checker."""
-    def read_ISO(self, iters, clone):
+    """ Read card with ISO format. Param is timeout checker. ms is for MagSpoof use. """
+    def read_ISO(self, iters, clone, ms):
         self.reset()
         msg = '\xc2%s' % READ_ISO
         assert self.dev.ctrl_transfer(0x21, 9, 0x0300, 0, msg) == len(msg)
@@ -140,14 +140,14 @@ class Reader:
             data = self.dev.read(0x81, 1024, 1000)
         except usb.core.USBError as e:
             if str(e) == ('[Errno 110] Operation timed out'):
-                return self.read_ISO(iters+1, clone)
+                return self.read_ISO(iters+1, clone, ms)
                 #sys.exit('Read operation timed out.')
             else:
                 self.reset()
                 sys.exit('Read operation failed: %s' % str(e))
 
         #TODO Check on return bytes for better parsing/handling read errors
-        return parse_ISO(data) if not clone else data
+        return parse_ISO(data, ms) if not clone else data
 
     """ Read card raw data. Param is timeout checker. """
     def read_RAW(self, iters):
@@ -207,7 +207,7 @@ class Reader:
         sys.exit('This feature has not yet been implemented.')
 
         '''self.reset()
-        data = self.read_ISO(0, True)[1:]
+        data = self.read_ISO(0, True, False)[1:]
         #print(str(data))
         result = [hex(x).replace('0x', 'x') for x in data]
 

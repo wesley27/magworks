@@ -15,7 +15,7 @@ _  /  / / / /_/ /_  /_/ /__ |/ |/ / / /_/ /  /   _  ,<  _(__  ) \n\
 def cli():
     parser = argparse.ArgumentParser(prog='magworks', description='A command-line tool for intefacing MSR devices.(MSR206/MSR605/MSR605X/MSR606). Operational arguments (such as -r, read) must be used individually, and will be processed in the order they appear below.', epilog='Developed by W. Wesley Weidenhamer II.')
     
-    parser.add_argument('-r', choices=['iso', 'raw'], help='read data from a magnetic stripe card')
+    parser.add_argument('-r', choices=['iso', 'raw', 'isoms'], help='read data from a magnetic stripe card')
     parser.add_argument('-w', choices=['iso', 'raw'], help='write data to a magnetic stripe card')
     parser.add_argument('-c', choices=['iso', 'raw'], help='clone data from an existing card to a new one')
     parser.add_argument('-e', choices=['all', '1', '2', '3'], help='erase data from a magnetic stripe card')
@@ -39,7 +39,7 @@ def main():
     msr.claim_reader()
 
     if args.r is not None:
-        msr.read_ISO(0, False) if args.r == 'iso' else msr.read_RAW(0)
+        msr.read_ISO(0, False, False) if args.r == 'iso' else msr.read_RAW(0) if args.r == 'raw' else msr.read_ISO(0, False, True)
     
     elif args.w is not None:
         msr.write_ISO() if args.w == 'iso' else msr.write_RAW(0)

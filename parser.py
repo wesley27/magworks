@@ -137,8 +137,11 @@ def ISO_track2(result, card_data):
 
     return card_data
 
-""" Parse data from track 3 in ISO format. """
-def ISO_track3(result, card_data):
+""" Parse data from track 3 in ISO format. ms parameter is for MagSpoof use. """
+def ISO_track3(result, card_data, ms):
+    if ms:
+        return ISO_track2(result, card_data)
+
     # confirm track 3 start sentinel
     if len(result) == 0 or result[0] != '3b':
         return card_data
@@ -152,8 +155,8 @@ def ISO_track3(result, card_data):
 
     return card_data
 
-""" Parse ISO card data. """
-def parse_ISO(data):
+""" Parse ISO card data. ms is for use by MagSpoof. """
+def parse_ISO(data, ms):
     result = [hex(x).replace('0x', '') for x in data]
     print(str(result))
     for i in range(len(result)):
@@ -171,7 +174,7 @@ def parse_ISO(data):
 
     card_data = ISO_track1(result[t1_start:t1_end])
     card_data = ISO_track2(result[t2_start:t2_end], card_data)
-    card_data = ISO_track3(result[t3_start:t3_end], card_data)
+    card_data = ISO_track3(result[t3_start:t3_end], card_data, ms)
     
     for i in card_data:
         print(i)

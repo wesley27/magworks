@@ -180,8 +180,117 @@ def parse_ISO(data, ms):
     for i in card_data:
         print(i)
 
+""" Parse binary from RAW track 2/3. """
+def RAW_t23_binary():
+    graph = {
+            '00001': '0',
+            '10000': '1',
+            '01000': '2',
+            '11001': '3',
+            '00100': '4',
+            '10101': '5',
+            '01101': '6',
+            '11100': '7',
+            '00010': '8',
+            '10011': '9',
+            '01011': ':',
+            '11010': ';',
+            '00111': '<',
+            '10110': '=',
+            '01110': '>',
+            '11111': '?'
+            }
+    return graph
+
+""" Parse binary from RAW track 1. """
+def RAW_t1_binary():
+    graph = {
+            '000000': ' ',
+            '000010': '0',
+            '000001': '@',
+            '000011': 'P',
+
+            '100000': '!',
+            '100010': '1',
+            '100001': 'A',
+            '100011': 'Q',
+
+            '010000': '\"',
+            '010010': '2',
+            '010001': 'B',
+            '010011': 'R',
+
+            '110000': '#',
+            '110010': '3',
+            '110001': 'C',
+            '110011': 'S',
+            
+            '001000': '$',
+            '001010': '4',
+            '001001': 'D',
+            '001011': 'T',
+
+            '101000': '%',
+            '101010': '5',
+            '101001': 'E',
+            '101011': 'U',
+
+            '011000': '&',
+            '011010': '6',
+            '011001': 'F',
+            '011011': 'V',
+
+            '111000': '\'',
+            '111010': '7',
+            '111001': 'G',
+            '111011': 'W',
+
+            '000100': '(',
+            '000110': '8',
+            '000101': 'H',
+            '000111': 'X',
+            
+            '100100': ')',
+            '100110': '9',
+            '100101': 'I',
+            '100111': 'Y',
+            
+            '010100': '*',
+            '010110': ':',
+            '010101': 'J',
+            '010111': 'Z',
+            
+            '110100': '+',
+            '110110': ';',
+            '110101': 'K',
+            '110111': '[',
+
+            '001100': '`',
+            '001110': '<',
+            '001101': 'L',
+            '001111': '\\',
+            
+            '101100': ',',
+            '101110': '=',
+            '101101': 'M',
+            '101111': ']',
+            
+            '011100': '.',
+            '011110': '>',
+            '011101': 'N',
+            '011111': '^',
+
+            '111100': '/',
+            '111110': '?',
+            '111101': 'O',
+            '111111': '_'
+            }
+    return graph
+
 """ Parse RAW data from track 1."""
 def RAW_track1(data):
+    if len(data) <= 1:
+        return []
     for i in range(len(data)):
         if len(data[i]) == 1:
             data[i] = '0'+data[i]
@@ -199,24 +308,36 @@ def RAW_track1(data):
         if count == 7:
             bn2 += ' '
             count = 0
-        
+
+    g = RAW_t1_binary()
+    bn2l = bn2.split(' ')
+    dc = ''
+    for e in bn2l:
+        if len(e) < 6:
+            continue
+        if e[:6] in g:
+            dc += g[e[:6]]
+        else:
+            dc += '|' #unique identifier for missing characters
 
     card_data = []
     card_data.append('Track 1:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
     card_data.append('  Binary: ' + bn2)
+    card_data.append('  Decoded: ' + dc)
 
     return card_data
 
 """ Parse RAW data from track 2. """
 def RAW_track2(data, card_data):
+    if len(data) <= 1:
+        return card_data
     for i in range(len(data)):
         if len(data[i]) == 1:
             data[i] = '0'+data[i]
             
     length = codecs.decode(data[0], 'hex') 
-    rd = str(data[1:])
     rd = str(data[1:])
 
     bn = bin(int((''.join(data[1:])), 16))[2:].zfill(32)
@@ -229,10 +350,22 @@ def RAW_track2(data, card_data):
             bn2 += ' '
             count = 0
 
+    g = RAW_t23_binary()
+    bn2l = bn2.split(' ')
+    dc = ' '
+    for e in bn2l:
+        if len(e) < 5:
+            continue
+        if e in g:
+            dc += g[e]
+        else:
+            dc += '|' #unique identifier for missing characters
+
     card_data.append('Track 2:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
     card_data.append('  Binary: ' + bn2)   
+    card_data.append('  Decoded: ' + dc)
 
     return card_data   
 
@@ -257,10 +390,22 @@ def RAW_track3(data, card_data):
             bn2 += ' '
             count = 0
 
+    g = RAW_t23_binary()
+    bn2l = bn2.split(' ')
+    dc = ' '
+    for e in bn2l:
+        if len(e) < 5:
+            continue
+        if e in g:
+            dc += g[e]
+        else:
+            dc += '|' # unique identifier for missing characters
+
     card_data.append('Track 3:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
     card_data.append('  Binary: ' + bn)
+    card_data.append('  Decoded: ' + dc)
 
     return card_data   
 

@@ -159,7 +159,7 @@ def ISO_track3(result, card_data, ms):
 """ Parse ISO card data. ms is for use by MagSpoof. """
 def parse_ISO(data, ms):
     result = [hex(x).replace('0x', '') for x in data]
-    print(str(result))
+    #print(str(result))
     for i in range(len(result)):
         if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
             t3_end = i
@@ -189,13 +189,23 @@ def RAW_track1(data):
     length = codecs.decode(data[0], 'hex') 
     
     rd = str(data[1:])
-    dcd = codecs.decode(''.join(data[1:]), 'hex')
-    
+
+    bn = bin(int((''.join(data[1:])), 16))[2:].zfill(32)
+    bn2 = ''
+    count = 0
+    for c in bn:
+        count += 1
+        bn2 += c
+        if count == 7:
+            bn2 += ' '
+            count = 0
+        
+
     card_data = []
     card_data.append('Track 1:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
-    card_data.append('  Decoded: ' + dcd)
+    card_data.append('  Binary: ' + bn2)
 
     return card_data
 
@@ -208,17 +218,28 @@ def RAW_track2(data, card_data):
     length = codecs.decode(data[0], 'hex') 
     rd = str(data[1:])
     rd = str(data[1:])
-    dcd = codecs.decode(''.join(data[1:]), 'hex')
-    dcd = codecs.decode(''.join(data[1:]), 'hex')   
+
+    bn = bin(int((''.join(data[1:])), 16))[2:].zfill(32)
+    bn2 = ''
+    count = 0
+    for c in bn:
+        count += 1
+        bn2 += c
+        if count == 5:
+            bn2 += ' '
+            count = 0
+
     card_data.append('Track 2:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
-    card_data.append('  Decoded: ' + dcd)   
+    card_data.append('  Binary: ' + bn2)   
 
     return card_data   
 
 """ Parse RAW data from track 3. """
 def RAW_track3(data, card_data):
+    if len(data) <= 1:
+        return card_data
     for i in range(len(data)):
         if len(data[i]) == 1:
             data[i] = '0'+data[i]
@@ -226,18 +247,27 @@ def RAW_track3(data, card_data):
     length = codecs.decode(data[0], 'hex') 
     rd = str(data[1:])
 
-    dcd = codecs.decode(''.join(data[1:]), 'hex')   
+    bn = bin(int((''.join(data[1:])), 16))[2:].zfill(32)
+    bn2 = ''
+    count = 0
+    for c in bn:
+        count += 1
+        bn2 += c
+        if count == 5:
+            bn2 += ' '
+            count = 0
+
     card_data.append('Track 3:')
     card_data.append('  Length: ' + length)
     card_data.append('  Raw: ' + rd)
-    card_data.append('  Decoded: ' + dcd)
+    card_data.append('  Binary: ' + bn)
 
     return card_data   
 
 """ Parse RAW card data. """
 def parse_RAW(data):
     result = [hex(x).replace('0x', '') for x in data]
-    print(str(result))
+    #print(str(result))
     for i in range(len(result)):
         if result[i] == '3f' and result[i+1] == '1c' and result[i+2] == '1b':
             t3_end = i

@@ -38,7 +38,7 @@ Current progress and development:
 - [x] parse ISO card data
 - [ ] parse service codes
 - [x] read raw card data
-- [ ] parse raw card data
+- [x] parse raw card data
 - [ ] write ISO card data
 - [ ] write raw card data
 - [ ] clone card data

@@ -323,9 +323,9 @@ def RAW_track1(data):
     card_data = []
     card_data.append('Track 1:')
     card_data.append('  Length: ' + length)
-    card_data.append('  Raw: ' + rd)
-    card_data.append('  Binary: ' + bn2)
-    card_data.append('  Decoded: ' + dc)
+    card_data.append('  Encoded Raw Data: ' + rd)
+    card_data.append('  Encoded Binary: ' + bn2)
+    card_data.append('  Decoded Data: ' + dc)
 
     return card_data
 
@@ -363,9 +363,9 @@ def RAW_track2(data, card_data):
 
     card_data.append('Track 2:')
     card_data.append('  Length: ' + length)
-    card_data.append('  Raw: ' + rd)
-    card_data.append('  Binary: ' + bn2)   
-    card_data.append('  Decoded: ' + dc)
+    card_data.append('  Encoded Raw: ' + rd)
+    card_data.append('  Encoded Binary: ' + bn2)   
+    card_data.append('  Decoded Data: ' + dc)
 
     return card_data   
 
